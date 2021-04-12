@@ -24,10 +24,29 @@ class Heap:
 
     def heapify(self, idx=0):
         ### BEGIN SOLUTION
+        l = self._left(idx)
+        r = self._right(idx)
+        if l < len(self.data) and self.key(self.data[l]) > self.key(self.data[idx]):
+            big = l
+        else:
+            big = idx
+        if r < len(self.data) and self.key(self.data[r]) > self.key(self.data[big]):
+            big = r
+        if big != idx:
+            self.data[idx], self.data[big] = self.data[big], self.data[idx]
+        if l < len(self.data):
+            self.heapify(l)
+        if r < len(self.data):
+            self.heapify(r)
         ### END SOLUTION
 
     def add(self, x):
         ### BEGIN SOLUTION
+        self.data.append(x)
+        n = len(self.data) - 1
+        while n > 0 and self.key(self.data[self._parent(n)]) < self.key(self.data[n]):
+            self.data[n], self.data[self._parent(n)] = self.data[self._parent(n)], self.data[n]
+            n = self._parent(n)
         ### END SOLUTION
 
     def peek(self):
@@ -130,6 +149,32 @@ def test_key_heap_5():
 ################################################################################
 def running_medians(iterable):
     ### BEGIN SOLUTION
+    smaller = Heap()
+    larger = Heap(lambda x:-x)
+    medians = []
+    curmedian = None
+    for i, x in enumerate(iterable):
+        if i == 0:
+            curmedian = x
+        elif x > curmedian:
+            larger.add(x)
+        elif x <= curmedian:
+            smaller.add(x)
+        if i%2 == 0:
+            if len(larger) > len(smaller):
+                smaller.add(curmedian)
+                curmedian = larger.pop()
+            elif len(smaller) > len(larger):
+                larger.add(curmedian)
+                curmedian = smaller.pop()
+            medians.append(curmedian)
+        else:
+            if len(larger) > len(smaller):
+                medians.append((curmedian + larger.peek())/2)
+            else:
+                medians.append((curmedian + smaller.peek())/2)
+        print(len(medians))
+    return medians
     ### END SOLUTION
 
 ################################################################################
@@ -174,6 +219,7 @@ def test_median_3():
 ################################################################################
 def topk(items, k, keyf):
     ### BEGIN SOLUTION
+    pass
     ### END SOLUTION
 
 ################################################################################
@@ -213,15 +259,15 @@ def say_success():
 # MAIN
 ################################################################################
 def main():
-    for t in [test_key_heap_1,
-              test_key_heap_2,
-              test_key_heap_3,
-              test_key_heap_4,
-              test_key_heap_5,
+    for t in [#test_key_heap_1,
+              #test_key_heap_2,
+              #test_key_heap_3,
+              #test_key_heap_4,
+              #test_key_heap_5,
               test_median_1,
               test_median_2,
               test_median_3,
-              test_topk_students
+              #test_topk_students
               ]:
         say_test(t)
         t()
