@@ -34,10 +34,10 @@ class Heap:
             big = r
         if big != idx:
             self.data[idx], self.data[big] = self.data[big], self.data[idx]
-        if l < len(self.data):
-            self.heapify(l)
-        if r < len(self.data):
-            self.heapify(r)
+            if l < len(self.data):
+                self.heapify(l)
+            if r < len(self.data):
+                self.heapify(r)
         ### END SOLUTION
 
     def add(self, x):
@@ -218,7 +218,18 @@ def test_median_3():
 ################################################################################
 def topk(items, k, keyf):
     ### BEGIN SOLUTION
-    pass
+    top = Heap(keyf)
+    for i in items:
+        if len(top) < k:
+            top.add(i)
+        else:
+            if keyf(i) > keyf(top.peek()):
+                top.pop
+                top.add(i)
+    out = [None] * k
+    for x in range(k):
+        out[x] = top.pop()
+    return out
     ### END SOLUTION
 
 ################################################################################
@@ -258,15 +269,15 @@ def say_success():
 # MAIN
 ################################################################################
 def main():
-    for t in [#test_key_heap_1,
-              #test_key_heap_2,
-              #test_key_heap_3,
-              #test_key_heap_4,
-              #test_key_heap_5,
+    for t in [test_key_heap_1,
+              test_key_heap_2,
+              test_key_heap_3,
+              test_key_heap_4,
+              test_key_heap_5,
               test_median_1,
               test_median_2,
               test_median_3,
-              #test_topk_students
+              test_topk_students
               ]:
         say_test(t)
         t()
