@@ -173,7 +173,6 @@ def running_medians(iterable):
                 medians.append((curmedian + larger.peek())/2)
             else:
                 medians.append((curmedian + smaller.peek())/2)
-        print(len(medians))
     return medians
     ### END SOLUTION
 
