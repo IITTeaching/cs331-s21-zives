@@ -205,8 +205,34 @@ class HBStree:
                 toreplace = cur.left
                 while toreplace.right:
                     toreplace = toreplace.right
-                end = toreplace.val
-                self.delete(end)
+                val = toreplace.val
+                self.delete(val)
+                cur = self.root_versions[-1]
+                while cur.val != key:
+                    parent = cur
+                    if cur.val < key:
+                        cur = cur.right
+                    else:
+                        cur = cur.left
+                end = self.INode(val, cur.left, cur.right)
+                while True:
+                    cur = self.root_versions[-1]
+                    if end.val == self.root_versions[-1].val:
+                        self.root_versions.append(end)
+                        break
+                    while True:
+                        if cur.val < key:
+                            if cur.right and (cur.right.val != end.val or cur.right.val != key):
+                                cur = cur.right
+                            else:
+                                end = self.INode(cur.val, cur.left, end)
+                                break
+                        elif cur.val > key:
+                            if cur.left and (cur.left.val != end.val or cur.left.val != key):
+                                cur = cur.left
+                            else:
+                                end = self.INode(cur.val, end, cur.right)
+                                break
         # END SOLUTION
 
     @staticmethod
