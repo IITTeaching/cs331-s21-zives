@@ -61,7 +61,7 @@ class HBStree:
                 cur = cur.right
             else:
                 cur = cur.left
-        return KeyError
+        raise KeyError
         # END SOLUTION
 
     def __contains__(self, el):
@@ -109,8 +109,7 @@ class HBStree:
                             end = self.INode(cur.val, end, cur.right)
                             break
         elif not cur:
-            self.root_versions.append(self.INode(key, None, None))
-        print(self.stringify_subtree(self.root_versions[-1]))    
+            self.root_versions.append(self.INode(key, None, None))   
         # END SOLUTION
 
     def delete(self,key):
@@ -208,7 +207,6 @@ class HBStree:
                     toreplace = toreplace.right
                 end = toreplace.val
                 self.delete(end)
-        print(self.stringify_subtree(self.root_versions[-1]))
         # END SOLUTION
 
     @staticmethod
