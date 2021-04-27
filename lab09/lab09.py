@@ -92,6 +92,9 @@ class HBStree:
         if key not in self and cur:
             while True:
                 cur = self.root_versions[-1]
+                if end.val == self.root_versions[-1].val:
+                    self.root_versions.append(end)
+                    break
                 while True:
                     if cur.val < key:
                         if cur.right and cur.right.val != end.val:
@@ -105,27 +108,44 @@ class HBStree:
                         else:
                             end = self.INode(cur.val, end, cur.right)
                             break
-                if end.val == self.root_versions[-1].val:
-                    self.root_versions.append(end)
-                    break
         elif not cur:
-            self.root_versions.append(self.INode(key, None, None))         
+            self.root_versions.append(self.INode(key, None, None))
+        print(self.stringify_subtree(self.root_versions[-1]))    
         # END SOLUTION
 
     def delete(self,key):
         """Delete key from the tree, creating a new version of the tree. If key does not exist in the current version of the tree, then do nothing and refrain from creating a new version."""
         # BEGIN SOLUTION
         cur = self.root_versions[-1]
+        parent = None
         if key in self and cur:
             while cur.val != key:
+                parent = cur
                 if cur.val < key:
                     cur = cur.right
                 else:
                     cur = cur.left
-            if cur.left and not cur.right:
-                end = cur.left
+            if not parent:
+                if cur.left and not cur.right:
+                    self.root_versions.append(cur.left)
+                elif cur.right and not cur.left:
+                    self.root_versions.append(cur.right)
+                elif not cur.right and not cur.left:
+                    self.root_versions.append(None)
+                else:
+                    new = cur.left
+                    while new.right:
+                        new = new.right
+                    val = new.val
+                    self.delete(val)
+                    self.root_versions.append(self.INode(val, self.root_versions[-1].left, self.root_versions[-1].right))
+            elif cur.left and not cur.right:
+                end = self.INode(parent.val, cur.left, parent.right)
                 while True:
                     cur = self.root_versions[-1]
+                    if end.val == self.root_versions[-1].val:
+                        self.root_versions.append(end)
+                        break
                     while True:
                         if cur.val < key:
                             if cur.right and (cur.right.val != end.val or cur.right.val != key):
@@ -139,13 +159,13 @@ class HBStree:
                             else:
                                 end = self.INode(cur.val, end, cur.right)
                                 break
-                    if end.val == self.root_versions[-1].val:
-                        self.root_versions.append(end)
-                        break
             elif cur.right and not cur.left:
-                end = cur.right
+                end = self.INode(parent.val, parent.left, cur.right)
                 while True:
                     cur = self.root_versions[-1]
+                    if end.val == self.root_versions[-1].val:
+                        self.root_versions.append(end)
+                        break
                     while True:
                         if cur.val < key:
                             if cur.right and (cur.right.val != end.val or cur.right.val != key):
@@ -159,17 +179,36 @@ class HBStree:
                             else:
                                 end = self.INode(cur.val, end, cur.right)
                                 break
+            elif not cur.right and not cur.left:
+                if parent.right == cur:
+                    end = self.INode(parent.val, parent.left, None)
+                else:
+                    end = self.INode(parent.val, None, parent.right)
+                while True:
+                    cur = self.root_versions[-1]
                     if end.val == self.root_versions[-1].val:
                         self.root_versions.append(end)
                         break
+                    while True:
+                        if cur.val < key:
+                            if cur.right and (cur.right.val != end.val or cur.right.val != key):
+                                cur = cur.right
+                            else:
+                                end = self.INode(cur.val, cur.left, end)
+                                break
+                        elif cur.val > key:
+                            if cur.left and (cur.left.val != end.val or cur.left.val != key):
+                                cur = cur.left
+                            else:
+                                end = self.INode(cur.val, end, cur.right)
+                                break
             else:
                 toreplace = cur.left
                 while toreplace.right:
                     toreplace = toreplace.right
                 end = toreplace.val
                 self.delete(end)
-
-        print(self.version_iter())
+        print(self.stringify_subtree(self.root_versions[-1]))
         # END SOLUTION
 
     @staticmethod
