@@ -79,7 +79,7 @@ class AVLTree:
                             new, newp = new.left, new
                         newval = new.val
                         if newp.val == val:
-                            newp.right = None
+                            newp.right = new.right
                         elif new.right:
                             newp.left = new.right
                         else:
@@ -94,6 +94,8 @@ class AVLTree:
                         parent.right = None
                 else:
                     delit(val, parent.right)
+                if parent.right:
+                    self.rebalance(parent.right)
             else:
                 if parent.left.val == val:
                     if parent.left.left and parent.left.right:
@@ -102,7 +104,7 @@ class AVLTree:
                             new, newp = new.left, new
                         newval = new.val
                         if newp.val == val:
-                            newp.right = None
+                            newp.right = new.right
                         elif new.right:
                             newp.left = new.right
                         else:
@@ -117,10 +119,12 @@ class AVLTree:
                         parent.left = None
                 else:
                     delit(val, parent.left)
-            self.rebalance(parent)
+                if parent.left:
+                    self.rebalance(parent.left)
         parent = self.root
         if parent.val != val:
             delit(val, parent)
+            self.rebalance(self.root)
         else:
             if self.root.left and self.root.right:
                 new, newp = self.root.right, self.root
@@ -134,7 +138,7 @@ class AVLTree:
                 else:
                     newp.left = None
                 r, l = self.root.right, self.root.left
-                parent.left = self.Node(newval, l, r)
+                self.root = self.Node(newval, l, r)
             elif self.root.left:
                 self.root = self.root.rotate_left
             elif parent.left.right:
