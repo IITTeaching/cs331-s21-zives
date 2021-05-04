@@ -78,7 +78,9 @@ class AVLTree:
                         while new.left:
                             new, newp = new.left, new
                         newval = new.val
-                        if new.right:
+                        if newp.val == val:
+                            newp.right = None
+                        elif new.right:
                             newp.left = new.right
                         else:
                             newp.left = None
@@ -99,7 +101,9 @@ class AVLTree:
                         while new.left:
                             new, newp = new.left, new
                         newval = new.val
-                        if new.right:
+                        if newp.val == val:
+                            newp.right = None
+                        elif new.right:
                             newp.left = new.right
                         else:
                             newp.left = None
@@ -123,7 +127,9 @@ class AVLTree:
                 while new.left:
                     new, newp = new.left, new
                 newval = new.val
-                if new.right:
+                if newp.val == val:
+                    newp.right = new.right
+                elif new.right:
                     newp.left = new.right
                 else:
                     newp.left = None
@@ -267,12 +273,9 @@ def test_key_order_after_ops():
     t = AVLTree()
     for x in vals:
         t.add(x)
-        print('added ', x)
 
     for _ in range(len(vals) // 3):
         to_rem = vals.pop(random.randrange(len(vals)))
-        
-        print ("del ", to_rem, " ", to_rem in t)
         del t[to_rem]
 
     vals.sort()
