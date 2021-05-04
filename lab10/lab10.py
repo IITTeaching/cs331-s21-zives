@@ -15,6 +15,9 @@ class AVLTree:
 
         def rotate_left(self):
             ### BEGIN SOLUTION
+            n = self.right
+            self.val, n.val = n.val, self.val
+            self.left, self.right, n.left, n.right = n, n.right, self.left, n.left
             ### END SOLUTION
 
         @staticmethod
@@ -31,16 +34,100 @@ class AVLTree:
     @staticmethod
     def rebalance(t):
         ### BEGIN SOLUTION
+        bfactor = height(t.left) - height(t.right)
+        if bfactor > 1:
+            if height(t.left.left) < height(t.left.right):
+                t.left.rotate_left()
+            t.rotate_right()
+        if bfactor < -1:
+            if height(t.right.right) < height(t.right.left):
+                t.right.rotate_right()
+            t.rotate_left()
         ### END SOLUTION
 
     def add(self, val):
         assert(val not in self)
         ### BEGIN SOLUTION
+        def addit(val, parent):
+            if val > parent.val:
+                if parent.right:
+                    addit(val, parent.right)
+                else:
+                    parent.right = self.Node(val)
+            else:
+                if parent.left:
+                    addit(val, parent.left)
+                else:
+                    parent.left = self.Node(val)
+            self.rebalance(parent)
+        parent = self.root
+        if parent:
+            addit(val, parent)
+        else:
+            self.root = self.Node(val)
         ### END SOLUTION
 
     def __delitem__(self, val):
         assert(val in self)
         ### BEGIN SOLUTION
+        def delit(val, parent):
+            if val > parent.val:
+                if parent.right.val == val:
+                    if parent.right.right and parent.right.left:
+                        new = parent.right.right
+                        while new.left:
+                            new = new.left
+                        newval = new.val
+                        del self[newval]
+                        r, l = parent.right.right, parent.right.left
+                        parent.right = self.Node(newval, l, r)
+                    elif parent.right.left:
+                        parent.right = parent.right.left
+                    elif parent.right.right:
+                        parent.right = parent.right.right
+                    else:
+                        parent.right = None
+                else:
+                    delit(val, parent.right)
+            else:
+                if parent.left.val == val:
+                    if parent.left.left and parent.left.right:
+                        new = parent.left.right
+                        while new.left:
+                            new = new.left
+                        newval = new.val
+                        del self[newval]
+                        r,l = parent.left.right, parent.left.left
+                        parent.left = self.Node(newval, l, r)
+                    elif parent.left.left:
+                        parent.left = parent.left.left
+                    elif parent.left.right:
+                        parent.left = parent.left.right
+                    else:
+                        parent.left = None
+                else:
+                    delit(val, parent.left)
+            self.rebalance(parent)
+        parent = self.root
+        if parent.val != val:
+            delit(val, parent)
+        else:
+            if self.root.left and self.root.right:
+                new = self.root.right
+                while new.left:
+                    new = new.left
+                newval = new.val
+                del self[newval]
+                r, l = self.root.right, self.root.left
+                parent.left = self.Node(newval, l, r)
+            elif self.root.left:
+                self.root = self.root.rotate_left
+            elif parent.left.right:
+                self.root = self.root.right
+            else:
+                self.root = None
+            if self.root:
+                self.rebalance(self.root)
         ### END SOLUTION
 
     def __contains__(self, val):
@@ -171,9 +258,12 @@ def test_key_order_after_ops():
     t = AVLTree()
     for x in vals:
         t.add(x)
+        print('added ', x)
 
     for _ in range(len(vals) // 3):
         to_rem = vals.pop(random.randrange(len(vals)))
+        
+        print ("del ", to_rem, " ", to_rem in t)
         del t[to_rem]
 
     vals.sort()
