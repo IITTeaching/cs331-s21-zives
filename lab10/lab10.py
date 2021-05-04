@@ -74,11 +74,14 @@ class AVLTree:
             if val > parent.val:
                 if parent.right.val == val:
                     if parent.right.right and parent.right.left:
-                        new = parent.right.right
+                        new, newp = parent.right.right, parent.right
                         while new.left:
-                            new = new.left
+                            new, newp = new.left, new
                         newval = new.val
-                        del self[newval]
+                        if new.right:
+                            newp.left = new.right
+                        else:
+                            newp.left = None
                         r, l = parent.right.right, parent.right.left
                         parent.right = self.Node(newval, l, r)
                     elif parent.right.left:
@@ -92,11 +95,14 @@ class AVLTree:
             else:
                 if parent.left.val == val:
                     if parent.left.left and parent.left.right:
-                        new = parent.left.right
+                        new, newp = parent.left.right, parent.left
                         while new.left:
-                            new = new.left
+                            new, newp = new.left, new
                         newval = new.val
-                        del self[newval]
+                        if new.right:
+                            newp.left = new.right
+                        else:
+                            newp.left = None
                         r,l = parent.left.right, parent.left.left
                         parent.left = self.Node(newval, l, r)
                     elif parent.left.left:
@@ -113,11 +119,14 @@ class AVLTree:
             delit(val, parent)
         else:
             if self.root.left and self.root.right:
-                new = self.root.right
+                new, newp = self.root.right, self.root
                 while new.left:
-                    new = new.left
+                    new, newp = new.left, new
                 newval = new.val
-                del self[newval]
+                if new.right:
+                    newp.left = new.right
+                else:
+                    newp.left = None
                 r, l = self.root.right, self.root.left
                 parent.left = self.Node(newval, l, r)
             elif self.root.left:
