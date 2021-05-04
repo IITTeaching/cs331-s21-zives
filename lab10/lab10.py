@@ -141,7 +141,7 @@ class AVLTree:
                 self.root = self.Node(newval, l, r)
             elif self.root.left:
                 self.root = self.root.rotate_left
-            elif parent.left.right:
+            elif self.root.right:
                 self.root = self.root.right
             else:
                 self.root = None
