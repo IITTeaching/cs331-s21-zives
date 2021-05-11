@@ -7,4 +7,11 @@ def book_to_words(book_url='https://www.gutenberg.org/files/84/84-0.txt'):
     return bookascii.split()
 
 def radix_a_book(book_url='https://www.gutenberg.org/files/84/84-0.txt'):
-    pass
+    wordunsorted = book_to_words(book_url)
+    print(wordunsorted)
+
+def main():
+    print('hello world')
+
+if __name__ == '__main__':
+    main()
