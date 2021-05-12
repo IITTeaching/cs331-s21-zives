@@ -11,7 +11,7 @@ def radix_a_book(book_url='https://www.gutenberg.org/files/84/84-0.txt'):
     print(wordunsorted)
 
 def main():
-    print('hello world')
+    radix_a_book()
 
 if __name__ == '__main__':
     main()
